@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<script>
+      window.onload = function() {
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
+      canvas.width = 1920;
+      canvas.height = 1080;
+      var Upsize = 1;
+      //добавляем элемент canvas в body 
+      document.body.appendChild(canvas);
+      // начальные параметры
+      var particles = {},
+          particleIndex = 0,
+          settings1 = {
+            density: 20,
+            startingX: canvas.width / 3,
+            startingY: canvas.height / 2.5,
+            gravity: 0,
+            sizeof1:1
+          };
+      // создание шариков
+      function Particle() {
+      	this.SIZE = settings1.sizeof1;
+        this.x = settings1.startingX;
+        this.y = settings1.startingY;
+        this.vx = Math.random() * 20 - 15;
+        this.vy = Math.random() * 20 - 10;
+        // добавление нового шарика
+        particleIndex ++;
+        particles[particleIndex] = this;
+        this.id = particleIndex;
+        this.life = 0;
+        this.maxLife = 100;
+      }
+      
+      Particle.prototype.draw = function() {
+      	Upsize = 1;
+        this.SIZE +=settings1.sizeof1;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += settings1.gravity;
+        this.life++;
+ 		
+        if (this.life >= this.maxLife) {
+          delete particles[this.id];
+        }
+        // создание фигур
+        context.clearRect(settings1.leftWall, settings1.groundLevel, canvas.width, canvas.height);
+        context.beginPath();
+        context.fillStyle="white";
+        context.arc(this.x, this.y, this.SIZE, 0, Math.PI*2, true);
+        context.closePath();
+        context.fill();
+      }
+      
+      setInterval(function() {
+        context.fillStyle = "#000";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < settings1.density; i++) {           
+             if (Math.random() > 0.97) {
+                   new Particle();
+                   Upsize = Upsize+0.1;
+          }
+        }
+        for (var i in particles) {
+          	
+          particles[i].draw();
+        }
+      }, 30);
+    };
+</script>
+</body>
+</html>

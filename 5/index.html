@@ -1,0 +1,93 @@
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<script>
+      window.onload = function() {
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
+      canvas.width = 1920;
+      canvas.height = 1080;
+      var Upsize = 1;
+       //добавляем элемент canvas в body 
+      document.body.appendChild(canvas);
+      // начальная позиция
+      var posX = -100,
+          posY = canvas.height / 1;
+      // начальные параметры
+      var particles = {},
+          particleIndex = 0,
+          settings = {
+            density: 20,
+            startingX: 500,
+            startingY: 35,
+            gravity: 1,
+            sizeof1:1,
+            cr: "red"
+          };
+      // создание шариков
+      function Particle() {
+      	if ((Math.random()*2)>1) {
+      	this.mainFig = true;
+        } else {
+        	this.mainFig = false;
+        }
+      	this.maincolor = 'rgb('+
+        	Math.floor(Math.random()*256)+','+
+      		Math.floor(Math.random()*256)+','+
+      		Math.floor(Math.random()*256)+')';;
+      	this.SIZE = settings.sizeof1;
+        this.x = settings.startingX;
+        this.y = settings.startingY;
+        this.vx = Math.random() * 20 - 15;
+        this.vy = Math.random() * 20 - 5;
+        // добавление новой фигуры
+        particleIndex ++;
+        particles[particleIndex] = this;
+        this.id = particleIndex;
+        this.life = 0;
+        this.maxLife = 100;
+      }
+ 
+      Particle.prototype.draw = function() {
+      	Upsize = 1;
+        this.SIZE +=settings.sizeof1;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += settings.gravity;
+        this.life++;
+ 
+        if (this.life >= this.maxLife) {
+          delete particles[this.id];
+        }
+        // создание фигур
+        context.clearRect(settings.leftWall, settings.groundLevel, canvas.width, canvas.height);
+        context.beginPath();
+        context.fillStyle=this.maincolor;
+        if (this.mainFig===true) {
+        context.arc(this.x, this.y, this.SIZE, 0, Math.PI*2, true);
+        } else {
+        context.rect(this.x, this.y, this.SIZE,this.SIZE);
+        }
+        context.closePath();
+        context.fill();
+      }
+      setInterval(function() {
+        context.fillStyle = "#000";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+ 
+        for (var i = 0; i < settings.density; i++) {           
+             if (Math.random() > 0.97) {
+                   new Particle();
+          }
+        }
+ 
+        for (var i in particles) {
+          particles[i].draw();
+        }
+      }, 30);
+    };
+</script>
+</body>
+</html>
